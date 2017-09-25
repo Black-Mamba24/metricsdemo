@@ -1,4 +1,4 @@
-package com.zhaiyi.work_with_metrics.service;
+package com.zhaiyi.work_with_metrics.annotation;
 
 import com.codahale.metrics.*;
 import com.codahale.metrics.annotation.*;
@@ -25,22 +25,21 @@ import java.util.concurrent.TimeUnit;
 public class AnnotationService {
     private Random random = new Random();
     private Set<String> set = new HashSet<String>();
-    private MetricRegistry registry = null;
+    private final MetricRegistry registry;
 
-    public AnnotationService() {
-        this(MetricRegisterFactory.getInstance());
-    }
+//    public AnnotationService() {
+//        this(MetricRegisterFactory.getInstance());
+//    }
 
     public AnnotationService(MetricRegistry registry) {
         this.registry = registry;
-        ConsoleReporter.forRegistry(this.registry).build().start(15, TimeUnit.SECONDS);
+        ConsoleReporter.forRegistry(this.registry).build().start(1, TimeUnit.SECONDS);
     }
 
-    //必要的,${this.registry}会调用
     public MetricRegistry getRegistry() {
         return registry;
     }
-//有bug,会导致反复注册同一个gauge
+
 //    @Gauge
 //    public int setSize() {
 //        return set.size();
@@ -81,6 +80,7 @@ public class AnnotationService {
     @Metered
     public void meteredService() {
         try {
+            System.out.println(registry.getNames());
             Thread.sleep(random.nextInt(150));
         } catch (InterruptedException e) {
         }
@@ -100,6 +100,7 @@ public class AnnotationService {
     @Timed
     public void timedService() {
         try {
+            System.out.println(registry.getNames());
             Thread.sleep(random.nextInt(150));
         } catch (InterruptedException e) {
         }
